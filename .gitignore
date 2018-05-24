@@ -4,5 +4,6 @@
 */src/cmake_install.cmake
 */src/Makefile
 */src/CMakeFiles/
-*/src/CMakeFiles/**
+*/CMakeFiles/
+
 
