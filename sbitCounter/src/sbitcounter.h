@@ -5,28 +5,33 @@ using namespace sc_dt;
 SC_MODULE(sbitCounter){
 	//inputs
 	sc_clock clk;
-	//sc_in<bool> reset;
-	//sc_in<bool> count_en;
-	//sc_in<bool> ud_ctrl;
+	sc_in<bool> reset;
+	sc_in<bool> count_en;
+	sc_in<bool> ud_ctrl;
 
 	//outputs
-	sc_out<int> cnt_out;
+	sc_out<sc_bv<17>> cnt_out;
 	sc_out<bool> ovf_intr;
 	sc_out<bool> unf_intr;
 
 	//internal
-	unsigned int cnt;
+	sc_bv<17> cnt = "0";
+
 	void processing();
-	//const unsigned int max = 131072;
-	const unsigned int max = 5;
-	 ///*
-	SC_CTOR(sbitCounter)//:clk("clk", sc_time(1, SC_SEC))
+	void add();
+	void subtract();
+
+
+
+	///*
+	SC_CTOR(sbitCounter):clk("clk", sc_time(1, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
-		cnt=0;
 	}
 	/**/
+
+
 
 	/*
 	SC_HAS_PROCESS(sbitCounter);
@@ -45,9 +50,59 @@ SC_MODULE(sbitCounter){
 
 };
 
+SC_MODULE(resetMod){
+	sc_clock clk;
+	sc_out<bool> reset;
+	bool shallReset;
+	SC_CTOR(resetMod):clk("clk", sc_time(1, SC_SEC))
+	{
+		SC_METHOD(processing);
+		sensitive << clk;
+		shallReset = false;
+	}
+
+	void processing(){
+		reset.write(shallReset);
+	}
+};
+
+SC_MODULE(countEnMod){
+	sc_clock clk;
+	sc_out<bool> count_en;
+	bool shallCount;
+	SC_CTOR(countEnMod):clk("clk", sc_time(1, SC_SEC))
+	{
+		SC_METHOD(processing);
+		sensitive << clk;
+		shallCount = true;
+	}
+
+	void processing(){
+		count_en.write(shallCount);
+	}
+};
+
+SC_MODULE(udMod){
+	sc_clock clk;
+	sc_out<bool> ud_ctrl;
+	bool ctrl;
+
+	SC_CTOR(udMod):clk("clk", sc_time(1, SC_SEC))
+	{
+		SC_METHOD(processing);
+		sensitive << clk;
+		ctrl = false;
+	}
+
+	void processing(){
+		ud_ctrl.write(ctrl);
+	}
+};
+
+
 SC_MODULE(drain)
 {
-    sc_in<int> in;
+    sc_in<sc_bv<17>> in;
     sc_in<bool> ovf_intr;
 	sc_in<bool> unf_intr;
 
