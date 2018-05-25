@@ -6,6 +6,9 @@ SC_MODULE(blank){
 	sc_clock clk;
 
 
+	void processing(){
+
+	}
 
 	SC_CTOR(sbitCounter)//:clk("clk", sc_time(1, SC_SEC))
 	{
