@@ -14,8 +14,12 @@ SC_MODULE(sbitCounter){
 	sc_out<bool> ovf_intr;
 	sc_out<bool> unf_intr;
 
+
+
 	//internal
 	sc_bv<17> cnt = "0";
+	bool ovf;
+	bool unf;
 
 	void processing();
 	void add();
@@ -24,7 +28,7 @@ SC_MODULE(sbitCounter){
 
 
 	///*
-	SC_CTOR(sbitCounter):clk("clk", sc_time(1, SC_SEC))
+	SC_CTOR(sbitCounter):clk("clk", sc_time(2, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
@@ -54,7 +58,8 @@ SC_MODULE(resetMod){
 	sc_clock clk;
 	sc_out<bool> reset;
 	bool shallReset;
-	SC_CTOR(resetMod):clk("clk", sc_time(1, SC_SEC))
+	bool random = false;
+	SC_CTOR(resetMod):clk("clk", sc_time(2, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
@@ -62,6 +67,12 @@ SC_MODULE(resetMod){
 	}
 
 	void processing(){
+		if(random){
+			int v1 = rand() % 100;
+			if(v1 < 5) shallReset = false;
+			else shallReset = true;
+		}
+
 		reset.write(shallReset);
 	}
 };
@@ -70,7 +81,8 @@ SC_MODULE(countEnMod){
 	sc_clock clk;
 	sc_out<bool> count_en;
 	bool shallCount;
-	SC_CTOR(countEnMod):clk("clk", sc_time(1, SC_SEC))
+	bool random = false;
+	SC_CTOR(countEnMod):clk("clk", sc_time(2, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
@@ -78,6 +90,11 @@ SC_MODULE(countEnMod){
 	}
 
 	void processing(){
+		if(random){
+			int v1 = rand() % 100;
+			if(v1 < 10) shallCount = false;
+			else shallCount = true;
+		}
 		count_en.write(shallCount);
 	}
 };
@@ -86,15 +103,22 @@ SC_MODULE(udMod){
 	sc_clock clk;
 	sc_out<bool> ud_ctrl;
 	bool ctrl;
+	bool random = false;
 
-	SC_CTOR(udMod):clk("clk", sc_time(1, SC_SEC))
+	SC_CTOR(udMod):clk("clk", sc_time(2, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
-		ctrl = false;
+		ctrl = true;
 	}
 
 	void processing(){
+		if(random){
+			int v1 = rand() % 100;
+			if(v1 < 30) ctrl = false;
+			else ctrl = true;
+		}
+
 		ud_ctrl.write(ctrl);
 	}
 };

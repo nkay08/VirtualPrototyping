@@ -27,6 +27,10 @@ void sbitCounter::processing(){
 
 	}
 	cnt_out.write(cnt);
+	ovf_intr.write(ovf);
+	unf_intr.write(unf);
+	ovf = false;
+	unf = false;
 
 
 	/*if(reset.read())cnt=0;
@@ -84,7 +88,7 @@ void sbitCounter::add(){
 
 	///*
 	if(carry){
-		ovf_intr.write(carry);
+		ovf = true;
 		cnt = "0";
 	}
 
@@ -108,7 +112,7 @@ void sbitCounter::subtract(){
 		}
 	}
 	if(carry){
-		unf_intr.write(carry);
+		unf=true;
 		cnt= "11111111111111111";
 	}
 }
