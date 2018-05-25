@@ -4,10 +4,26 @@
 SC_MODULE(alu){
 
 	sc_clock clk;
+	sc_in<sc_bv<3>> op_sel;
+	sc_in<bool> reset;
 
+	sc_inout<sc_bv<32>> data1;
+	sc_inout<sc_bv<32>> data2;
+	sc_out<sc_bv<32>> acc;
+	sc_out<sc_bv<8>> stat;
 
+	void processing();
 
-	SC_CTOR(alu)//:clk("clk", sc_time(1, SC_SEC))
+	void aluand();
+	void aluor();
+	void aluxor();
+	void aluadd();
+	void alumul();
+	void aludiv();
+	void aluror();
+	void alurol();
+
+	SC_CTOR(alu):clk("clk", sc_time(1, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
