@@ -5,5 +5,6 @@
 */src/Makefile
 */src/CMakeFiles/
 */CMakeFiles/
-
-
+/.cproject
+/.project
+/.settings/language.settings.xml
