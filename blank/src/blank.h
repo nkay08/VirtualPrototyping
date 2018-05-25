@@ -10,7 +10,7 @@ SC_MODULE(blank){
 
 	}
 
-	SC_CTOR(sbitCounter)//:clk("clk", sc_time(1, SC_SEC))
+	SC_CTOR(blank)//:clk("clk", sc_time(1, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
