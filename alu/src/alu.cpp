@@ -21,7 +21,7 @@ case "101":	aluadd();
 	break;
 case "110":	alumul();
 	break;
-case "111": aludiv;
+case "111": aludiv();
 	break;
 }
 
@@ -32,16 +32,18 @@ case "111": aludiv;
 void alu::aluand(){
 sc_bv<32> result= (data1.read & data2.read());
 acc.write(result);
+stat.write("1");
 
 }
 void alu::aluor(){
 sc_bv<32> result= (data1.read | data2.read());
 acc.write(result);
+stat.write("1");
 }
 void alu::aluxor(){
 	sc_bv<32> result= (data1.read ^ data2.read());
 	acc.write(result);
-
+	stat.write("1");
 }
 void alu::aluadd(){
 int int1 = data1.read().to_int();
@@ -53,7 +55,7 @@ if((acc.read() < data1.read()) || (acc.read() < data2.read())){
 	//overflow
 
 }
-
+stat.write("1");
 }
 
 void alu::alumul(){
@@ -69,7 +71,7 @@ void alu::alumul(){
 		//overflow
 
 	}
-
+	stat.write("1");
 }
 void alu::aludiv(){
 	int int1 = data1.read().to_int();
@@ -81,10 +83,29 @@ void alu::aludiv(){
 		//underflow
 
 	}
+	stat.write("1");
 }
 void alu::aluror(){
+	sc_bv<32> temp;
+	temp = data1.read();
+	int tempfirst = temp[0];
+	for(int i = 0; i < temp.length() -1;i++){
+		temp[i] = temp[i+1];
 
+	}
+	temp[temp.length()-1] = tempfirst;
+	acc.write(temp);
+	stat.write("1");
 }
 void alu::alurol(){
+	sc_bv<32> temp;
+	temp = data1.read();
+	int templast = temp[temp.length-1];
 
+	for(int i= 0; i< temp.length()-1;i++){
+		temp[i+1] = temp[i];
+	}
+	temp[0]=templast;
+	acc.write(temp);
+	stat.write("1");
 }
