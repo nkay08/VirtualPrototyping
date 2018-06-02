@@ -1,1 +1,2 @@
+export CXX=g++
 cmake .
