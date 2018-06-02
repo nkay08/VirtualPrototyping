@@ -92,6 +92,7 @@ void alu::aluror(){
 	for(int i = 0; i < temp.length() -1;i++){
 		temp[i] = temp[i+1];
 
+
 	}
 	temp[temp.length()-1] = tempfirst;
 	acc.write(temp);
