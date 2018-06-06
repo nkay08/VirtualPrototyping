@@ -9,3 +9,17 @@
 /.project
 /.settings/language.settings.xml
 */bin
+/simple_fifo/CMakeLists.txt
+/simple_fifo/cmake-files/.DS_Store
+/simple_fifo/cmake-files/.cproject
+/simple_fifo/cmake-files/.project
+/simple_fifo/cmake-files/FindPackageHandleStandardArgs.cmake
+/simple_fifo/cmake-files/FindSystemC.cmake
+/simple_fifo/cmake-files/FindSystemCAMS.cmake
+/simple_fifo/cmakeNormal.sh
+/simple_fifo/cmakeNormalClang.sh
+/simple_fifo/cmakeVoid.sh
+/simple_fifo/cmakeVoidClang.sh
+/simple_fifo/src/CMakeLists.txt
+/simple_fifo/src/main.cpp
+/simple_fifo/src/simple_fifo.cpp

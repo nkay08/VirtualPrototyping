@@ -5,84 +5,85 @@
 
 
 
-
-void genFifo::write_nb(T value){
-	if(num=max){
-		wait(read_end);
+template<class T>
+void genfifo<T>::write_nb(T value){
+	if(this->num==this->max){
+		wait(this->read_end);
 	}
-	write_begin.notify();
-	write++;
+	this->write_begin.notify();
+	this->write++;
 
-	vec.insert(0,value);
-	num++;
+	this->vec.insert(this->vec.begin(),value);
+	this->num++;
 
-	write_end.notify();
-	write--;
+	this->write_end.notify();
+	this->write--;
 }
-
-T genFifo::read_nb(){
-	if(num=0){
-		wait(write_end);
+template<class T>
+ T genfifo<T>::read_nb(){
+	if(this->num==0){
+		wait(this->write_end);
 	}
-	read_begin.notify();
-	read++;
+	this->read_begin.notify();
+	this->read++;
 
-	T data = vec.pop_back();
-	num--;
+	T data = this->vec.pop_back();
+	this->num--;
 
-	read_end.notify();
-	read--;
+	this->read_end.notify();
+	this->read--;
 	return data;
 
 }
-
-int genFifo::get_ndata(){
+template<class T>
+int genfifo<T>::get_ndata(){
 
 	return num;
 }
+template<class T>
+void genfifo<T>::write_b( T value){
 
-void genFifo::write_b(T value){
-
-	while(write>0 && read>0){
+	while(this->write>0 && this->read>0){
 		cout << "Write_b blocked" << endl;
-		wait(write_end | read_end);
+		wait(this->write_end | this->read_end);
 	}
 
-	write_begin.notify();
-	write++;
+	this->write_begin.notify();
+	this->write++;
 
-	vec.insert(0,value);
-	num++;
+	this->vec.insert(vec.begin(),value);
+	this->num++;
 
-	write_end.notify();
-	write--;
+	this->write_end.notify();
+	this->write--;
 
 }
 
-T genFifo::read_b(){
+template<class T>
+T genfifo<T>::read_b(){
 
-	while(write>0 && read>0){
+	while(this->write>0 && this->read>0){
 		cout << "Read_b blocked" << endl;
-		wait(write_end | read_end);
+		wait(this->write_end | this->read_end);
 	}
 
 
-	read_begin.notify();
-	read++;
+	this->read_begin.notify();
+	this->read++;
 
 	T data = vec.pop_back();
-	num--;
+	this->num--;
 
-	read_end.notify();
-	read--;
+	this->read_end.notify();
+	this->read--;
 	return data;
 
 }
-
-void genFifo::reset(){
+template<class T>
+void genfifo<T>::reset(){
 
 	std::vector<T> newvec;
-	vec = newvec;
-	num = 0;
+	this->vec = newvec;
+	this->num = 0;
 
 }

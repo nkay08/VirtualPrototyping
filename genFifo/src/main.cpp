@@ -1,16 +1,16 @@
 
 
 #include "genFifo.h"
-#include "genFifo.cpp"
+
 
 int sc_main(int argc, char * argv[]) {
 
-producer p("producer");
-consumer c("consumer");
+intproducer p("producer");
+intconsumer c("consumer");
 genfifo<int> gf("genfifo");
-
-p.genFifo = &gf;
-c.genFifo = &gf;
+genfifo<int>* gfptr = &gf;
+p.genFifo = gfptr;
+c.genFifo = gfptr;
 
 sc_start();
 return 0;
