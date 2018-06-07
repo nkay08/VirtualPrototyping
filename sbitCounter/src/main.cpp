@@ -4,8 +4,11 @@
  *  Created on: May 19, 2018
  *      Author: nkay
  */
-#include "sbitcounter.h"
+//#include <systemc.h>
+//#include "sbitcounter.h"
 #include "sbitcounter.cpp"
+
+
 //#include <sysc/datatypes/bit/sc_bv.h>
 
 

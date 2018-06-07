@@ -1,6 +1,6 @@
 #include <systemc.h>
-#include <sysc/datatypes/bit/sc_bv.h>
-using namespace sc_dt;
+//#include <sysc/datatypes/bit/sc_bv.h>
+//using namespace sc_dt;
 
 SC_MODULE(sbitCounter){
 	//inputs

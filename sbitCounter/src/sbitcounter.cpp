@@ -5,7 +5,8 @@
  *      Author: nkay
  */
 
-#include <systemc.h>
+
+#include "sbitcounter.h"
 
 
 void sbitCounter::processing(){
