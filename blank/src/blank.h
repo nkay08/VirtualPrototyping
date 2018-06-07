@@ -37,6 +37,13 @@ SC_MODULE(drain)
 {
 	sc_in<int> in;
 
+	SC_CTOR(drain)
+	{
+		SC_METHOD(processing);
+		sensitive << clk;
+	}
+
+	/*
 	SC_HAS_PROCESS(drain);
 	drain(sc_module_name n)
 	{
@@ -45,6 +52,7 @@ SC_MODULE(drain)
 		dont_initialize();
 
 	}
+	*/
 
 	void processing()
 	{
