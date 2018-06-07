@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project(sbitCounter)
+project(blank)
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH}/cmake-files ${CMAKE_CURRENT_SOURCE_DIR}/cmake-files)
