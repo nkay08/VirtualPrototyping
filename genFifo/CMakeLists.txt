@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 2.8)
-project(sbitCounter)
+project(genFifo)
 
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_MODULE_PATH}/cmake-files ${CMAKE_CURRENT_SOURCE_DIR}/cmake-files)
@@ -17,5 +17,14 @@ find_package(SystemC REQUIRED)
 
 include_directories(${SYSTEMC_INCLUDE_DIR})
 
-add_subdirectory(src)
+FILE(GLOB SRCFILES src/*.cpp)
 
+add_executable(run
+src/main.cpp  
+${SRCFILES}
+)
+
+
+target_link_libraries( run ${SYSTEMC_LIBRARIES})
+
+#add_subdirectory(src)

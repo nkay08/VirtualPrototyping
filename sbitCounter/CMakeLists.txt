@@ -17,5 +17,14 @@ find_package(SystemC REQUIRED)
 
 include_directories(${SYSTEMC_INCLUDE_DIR})
 
-add_subdirectory(src)
+FILE(GLOB SRCFILES src/*.cpp)
 
+add_executable(run
+src/main.cpp  
+${SRCFILES}
+)
+
+
+target_link_libraries( run ${SYSTEMC_LIBRARIES})
+
+#add_subdirectory(src)
