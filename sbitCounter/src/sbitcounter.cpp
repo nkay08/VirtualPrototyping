@@ -67,7 +67,7 @@ void sbitCounter::processing(){
 }
 
 void sbitCounter::add(){
-
+	cout << "UP" << endl;
 	bool carry = true;
 	///*
 	for(int i = 0; i < cnt.length();++i){
@@ -98,6 +98,7 @@ void sbitCounter::add(){
 }
 
 void sbitCounter::subtract(){
+	cout << "DOWN" << endl;
 	bool carry = true;
 	carry  = true;
 	for(int i =0 ;i< cnt.length();++i){

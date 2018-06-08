@@ -57,8 +57,18 @@ int sc_main(int argc, char * argv[]) {
 
 
     cout << "Initialized" << endl;
-    sc_start();
-    //sc_start(10, SC_SEC);
+
+    sc_trace_file *tf=sc_create_vcd_trace_file("sbitcounter");
+
+    sc_trace(tf, sig, "count_output");
+    sc_trace(tf, ofl, "ofl_output");
+    sc_trace(tf, ufl, "ufl_output");
+    sc_trace(tf, res, "res_output");
+    sc_trace(tf, ud, "ud_output");
+    sc_trace(tf, en, "en_output");
+
+    //sc_start();
+    sc_start(20, SC_SEC);
 
     return 0;
 
