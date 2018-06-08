@@ -24,6 +24,8 @@ class genfifo : public IGenFifo_read<T>, public IGenFifo_write<T>
 {
 
 public:
+
+
 	sc_clock clk;
 	std::vector<T> vec;
 	int num;
@@ -202,6 +204,7 @@ private:
 
 SC_MODULE(intproducer)
 {
+
 	sc_clock clk;
 	//sc_out<int>;
 	bool run;
@@ -209,6 +212,11 @@ SC_MODULE(intproducer)
 	bool once;
 
 public:
+	sc_inout<int> data;
+	sc_inout<bool> block;
+	sc_inout<bool> succio;
+	sc_inout<bool> startaction;
+
 	IGenFifo_write<int>* genFifo;
 	SC_CTOR(intproducer) :clk("clk", sc_time(2, SC_SEC))
 	{
@@ -228,33 +236,55 @@ public:
 
 
 			if(once){
-				wait(15,SC_MS);
+				wait(15,SC_NS);
 				once = false;
 			}
 			else{
 			int v2 = rand() % 8;
-			wait(v2,SC_MS);
+			wait(v2,SC_NS);
 			}
 			int v1 = rand() % 100;
 			if(random){
 				if(v1<50){
+					startaction.write(true);
+					block.write(true);
 					genFifo->write_b(v1);
 					cout << "Write_b value: " << v1 << endl;
+					data.write(v1);
+					succio.write(true);
+					startaction.write(false);
 
 				}
 				else{
+					startaction.write(true);
+					block.write(false);
 					bool succ = genFifo->write_nb(v1);
 					if (succ) {
 						cout << "Write_nb value: " << v1 << endl;
+						data.write(v1);
+						succio.write(true);
 					}
+					else{
+						succio.write(false);
+					}
+					startaction.write(false);
 				}
 
 			}
 			else{
+				startaction.write(true);
+				block.write(false);
 				bool succ = genFifo->write_nb(v1);
 				if (succ) {
 					cout << "Write_nb value: " << v1 << endl;
+					data.write(v1);
+					succio.write(true);
+
 				}
+				else {
+					succio.write(false);
+				}
+				startaction.write(false);
 			}
 			//cout << "waiting 2" << endl;
 			//wait(80, SC_NS);
@@ -270,7 +300,9 @@ public:
 
 SC_MODULE(intconsumer)
 {
+
 private:
+
 	sc_clock clk;
 	//sc_in<int> in;
 	bool run;
@@ -278,6 +310,11 @@ private:
 	bool random;
 
 public:
+	sc_inout<int> data;
+	sc_inout<bool> block;
+	sc_inout<bool> succio;
+	sc_inout<bool> startaction;
+
 	IGenFifo_read<int>* genFifo;
 	SC_CTOR(intconsumer) :clk("clk", sc_time(1, SC_SEC))
 	{
@@ -298,26 +335,54 @@ public:
 	{
 		while(run){
 			int v2 = rand() % 5;
-			wait(v2,SC_MS);
+			wait(v2,SC_NS);
 			int v1 = rand() % 100;
 			if(random){
 
 				if(v1 < 50) {
 					int val = -1;
-
+					startaction.write(true);
+					block.write(true);
 					genFifo->read_b(val);
 					cout << "Read_b value: " << val << endl;
+					data.write(val);
+					succio.write(true);
+					startaction.write(false);
 				}
 				else{
 					int val = -1;
+					startaction.write(true);
+					block.write(false);
 					bool succ = genFifo->read_nb(val);
-					if(succ) cout << "Read_nb value: " << val << endl;
+					if(succ){
+						cout << "Read_nb value: " << val << endl;
+						data.write(val);
+
+						succio.write(true);
+					}
+					else{
+						succio.write(false);
+					}
+					startaction.write(false);
 				}
 			}
 			else{
 				int val = -1;
+				block.write(false);
+				startaction.write(true);
 				bool succ = genFifo->read_nb(val);
-				if(succ) cout << "Read_nb value: " << val << endl;
+
+				if(succ){
+					cout << "Read_nb value: " << val << endl;
+					data.write(val);
+
+					succio.write(true);
+				}
+				else {
+					succio.write(false);
+				}
+
+				startaction.write(false);
 			}
 		}
 
