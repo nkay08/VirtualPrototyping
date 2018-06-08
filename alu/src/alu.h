@@ -29,6 +29,7 @@ SC_MODULE(alu){
 		SC_METHOD(processing);
 		sensitive << clk;
 		initonce = true;
+		dont_initialize();
 		//data1.write("1001");
 		//data2.write("101010");
 
@@ -61,6 +62,7 @@ SC_MODULE(init){
 		SC_METHOD(processing);
 		sensitive << clk;
 		once = true;
+		dont_initialize();
 	}
 
 	void processing(){
@@ -87,6 +89,7 @@ SC_MODULE(resetMod){
 		SC_METHOD(processing);
 		shallReset = false;
 		sensitive << clk;
+		dont_initialize();
 	}
 
 	void processing(){
