@@ -38,6 +38,15 @@ dr.stat(stat);
 //init.data1(data1);
 //init.data2(data2);
 
+sc_trace_file *tf=sc_create_vcd_trace_file("alu");
+
+sc_trace(tf, op_sel, "opsel_output");
+sc_trace(tf, reset, "reset_output");
+sc_trace(tf, data1, "data1_output");
+sc_trace(tf, data2, "data2_output");
+sc_trace(tf, acc, "acc_output");
+sc_trace(tf, stat, "stat_output");
+
 //sc_start();
 sc_start(10, SC_SEC);
 

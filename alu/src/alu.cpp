@@ -64,19 +64,20 @@ case 7:
 void alu::aluand(){
 sc_bv<32> result= (data1.read() & data2.read());
 acc.write(result);
-sc_bv<8> st = 0;
+sc_bv<8> st = "0";
 stat.write(st);
 
 }
 void alu::aluor(){
 sc_bv<32> result= (data1.read() | data2.read());
 acc.write(result);
-stat.write(0);
+sc_bv<8> st = "0";
+stat.write(st);
 }
 void alu::aluxor(){
 	sc_bv<32> result= (data1.read() ^ data2.read());
 	acc.write(result);
-	sc_bv<8> st = 0;
+	sc_bv<8> st = "0";
 	stat.write(st);
 }
 void alu::aluadd(){
@@ -88,10 +89,10 @@ acc.write(sc_bv<32>(result));
 sc_bv<8> st = 0;
 if((acc.read().to_int() < data1.read().to_int()) || (acc.read().to_int() < data2.read().to_int())){
 	//overflow
-st = 1000;
+st = "1000";
 }
 else{
-st = 0;
+st = "0";
 }
 stat.write(st);
 }
@@ -108,11 +109,11 @@ void alu::alumul(){
 	sc_bv<8> st = 0;
 	if(result >= max.to_int()){
 		//overflow
-		st = 1000;
+		st = "1000";
 
 	}
 	else{
-	st = 0;
+	st = "0";
 	}
 	stat.write(st);
 }
@@ -126,7 +127,7 @@ void alu::aludiv(){
 		//underflow
 
 	}
-	sc_bv<8> st = 0;
+	sc_bv<8> st = "0";
 	stat.write(st);
 }
 void alu::aluror(){
@@ -134,6 +135,8 @@ void alu::aluror(){
 	temp = data1.read();
 	temp = temp.rrotate(1);
 	acc.write(temp);
+	sc_bv<8> st = "0";
+	stat.write(st);
 	/*
 	sc_bv<32> temp;
 	temp = data1.read();
@@ -154,6 +157,8 @@ void alu::alurol(){
 	temp = data1.read();
 	temp = temp.lrotate(1);
 	acc.write(temp);
+	sc_bv<8> st = "0";
+	stat.write(st);
 	/*
 	sc_bv<32> temp;
 	temp = data1.read();
