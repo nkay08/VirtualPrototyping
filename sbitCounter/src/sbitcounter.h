@@ -32,6 +32,7 @@ SC_MODULE(sbitCounter){
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
+		dont_initialize();
 	}
 	/**/
 
@@ -64,6 +65,7 @@ SC_MODULE(resetMod){
 		SC_METHOD(processing);
 		sensitive << clk;
 		shallReset = false;
+		dont_initialize();
 	}
 
 	void processing(){
@@ -87,6 +89,7 @@ SC_MODULE(countEnMod){
 		SC_METHOD(processing);
 		sensitive << clk;
 		shallCount = true;
+		dont_initialize();
 	}
 
 	void processing(){
@@ -103,20 +106,27 @@ SC_MODULE(udMod){
 	sc_clock clk;
 	sc_out<bool> ud_ctrl;
 	bool ctrl;
-	bool random = false;
+	bool random;
 
 	SC_CTOR(udMod):clk("clk", sc_time(2, SC_SEC))
 	{
 		SC_METHOD(processing);
 		sensitive << clk;
 		ctrl = true;
+		random = true;
+		dont_initialize();
 	}
 
 	void processing(){
 		if(random){
 			int v1 = rand() % 100;
-			if(v1 < 30) ctrl = false;
-			else ctrl = true;
+			if(v1 < 25){
+				ctrl = false;
+
+			}
+			else {
+				ctrl = true;
+			}
 		}
 
 		ud_ctrl.write(ctrl);
@@ -136,6 +146,7 @@ SC_MODULE(drain)
         SC_METHOD(processing);
         sensitive << in;
         dont_initialize();
+
 
     }
 
