@@ -1,7 +1,7 @@
 
 
-//#include "alu.h"
-#include "alu.cpp"
+#include "alu.h"
+//#include "alu.cpp"
 
 
 int sc_main(int argc, char * argv[]) {

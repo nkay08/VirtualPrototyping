@@ -5,8 +5,8 @@
  *      Author: nkay
  */
 //#include <systemc.h>
-//#include "sbitcounter.h"
-#include "sbitcounter.cpp"
+#include "sbitcounter.h"
+//#include "sbitcounter.cpp"
 
 
 //#include <sysc/datatypes/bit/sc_bv.h>
