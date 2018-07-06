@@ -25,3 +25,4 @@
 /simple_fifo/src/simple_fifo.cpp
 */*.vcd 
 */*/*.vcd
+/*.vcd
