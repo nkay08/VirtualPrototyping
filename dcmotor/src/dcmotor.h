@@ -6,12 +6,14 @@
 SCA_TDF_MODULE(proportional){
 	sca_tdf::sca_in<float> in;
 	sca_tdf::sca_in<float> out;
-	sca_utio::sca_vector<float>	num, den;
+	sca_util::sca_vector<float>	num, den, s;
+	sca_tdf::sca_ltf_nd ltf;
 
 	float Kp;
 
 	void initialize(){
-
+		num(0)=Kp;
+		den(0)=1;
 	}
 
 	void setKp(float sKp){
@@ -19,7 +21,9 @@ SCA_TDF_MODULE(proportional){
 	}
 
 	void processing(){
-		out.write( in.read() * Kp);
+		//out.write( in.read() * Kp);
+		float temp = ltf( num,den,in.read() );
+		out.write(temp);
 	}
 
 	SCA_CTOR(proportional):Kp(1){
@@ -32,7 +36,7 @@ SCA_TDF_MODULE(integral){
 
 	sca_tdf::sca_in<float> in;
 	sca_tdf::sca_in<float> out;
-	sca_utio::sca_vector<float>	num, den;
+	sca_util::sca_vector<float>	num, den;
 	sca_tdf::sca_ltf_nd ltf;
 	sca_util::sca_vector<float> s;
 	double Ki;
@@ -50,7 +54,7 @@ SCA_TDF_MODULE(integral){
 
 	void processing(){
 		float infloat = in.read();
-		out.write(ltf(num,den,s,infloat));
+		out.write( ltf( num,den,in.read() ) );
 	}
 
 	SCA_CTOR(integral):Ki(4*M_PI){
@@ -62,7 +66,7 @@ SCA_TDF_MODULE(integral){
 SCA_TDF_MODULE(derivative){
 	sca_tdf::sca_in<float> in;
 	sca_tdf::sca_in<float> out;
-	sca_utio::sca_vector<float>	num, den;
+	sca_util::sca_vector<float>	num, den, s;
 	double Kp;
 
 	sca_tdf::sca_ltf_nd pid_derivative;
@@ -76,7 +80,8 @@ SCA_TDF_MODULE(derivative){
 	}
 
 	void processing(){
-
+		float temp = pid_derivative( num,den,in.read() );
+		out.write(temp);
 	}
 
 	SCA_CTOR(derivative):Kp(1/15.0){
@@ -202,7 +207,8 @@ SCA_TDF_MODULE(pwm){
 SCA_TDF_MODULE(dcmotor){
 	sca_tdf::sca_in<float> in;
 	sca_tdf::sca_in<float> out;
-
+	sca_tdf::sca_ltf_nd ltf;
+	sc_
 	// sc_clock clk;
 
 
