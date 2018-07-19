@@ -9,6 +9,7 @@
 #define DCMOTOR_SRC_PROPORTIONAL_H_
 
 #include <systemc.h>
+#include "systemc-ams"
 
 SCA_TDF_MODULE(proportional){
 	sca_tdf::sca_in<float> in;

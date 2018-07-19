@@ -9,6 +9,7 @@
 #define DCMOTOR_SRC_DERIVATIVE_H_
 
 #include <systemc.h>
+#include "systemc-ams"
 
 SCA_TDF_MODULE(derivative){
 	sca_tdf::sca_in<float> in;

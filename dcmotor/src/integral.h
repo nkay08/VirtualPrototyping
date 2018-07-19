@@ -10,6 +10,7 @@
 
 
 #include <systemc.h>
+#include "systemc-ams"
 
 
 

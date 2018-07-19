@@ -8,22 +8,24 @@
 #ifndef DCMOTOR_SRC_PWM_H_
 #define DCMOTOR_SRC_PWM_H_
 
-
+#include <systemc.h>
+#include "systemc-ams"
 
 SCA_TDF_MODULE(pwm){
 	sca_tdf::sca_in<float> in;
 	sca_tdf::sca_in<float> out;
 
 
-private:
-	double t_ramp;
-	double t_duty;
-	double t_step;
 
+private:
+//	double t_ramp;
+	double t_duty;
+//	double t_step;
+	float v_drv;
 public:
 
 
-	SCA_CTOR(pwm):in("in"),out("out"),t_ramp(0.05),t_step(5){
+	SCA_CTOR(pwm):in("in"),out("out"),t_ramp(0.05),t_step(5),v_drv(1.0){
 
 	}
 
@@ -34,10 +36,13 @@ public:
 	void processing(){
 		float c = in.read();
 		t_duty = c * ( t_step - 2 * t_ramp  );
+		out.write(v_drv);
 	}
 
 	void set_attributes() {
 		allow_dynamic_tdf();
+		does_attribute_changes();
+		accept_attribute_changes();
 	}
 
 	void change_attributes() {

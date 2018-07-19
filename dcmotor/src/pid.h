@@ -9,6 +9,7 @@
 #define DCMOTOR_SRC_PID_H_
 
 #include <systemc.h>
+#include "systemc-ams"
 #include "proportional.h"
 #include "integral.h"
 #include "derivative.h"

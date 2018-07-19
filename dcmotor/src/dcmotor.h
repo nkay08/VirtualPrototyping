@@ -2,6 +2,7 @@
 #define DCMOTOR_SRC_DCMOTOR_H_
 
 #include <systemc.h>
+#include "systemc-ams"
 
 
 SCA_TDF_MODULE(dcmotor){
