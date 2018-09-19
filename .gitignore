@@ -26,3 +26,5 @@
 */*.vcd 
 */*/*.vcd
 /*.vcd
+*/.DS_Store
+*/*/.DS_Store
