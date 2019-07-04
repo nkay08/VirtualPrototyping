@@ -51,35 +51,35 @@ SC_MODULE(dc_motor_composition){
 };
 
 
-//SCA_TDF_MODULE(source){
-//    sca_tdf::sca_out<double> out;
-//
-//
-//    void processing() {
-//        double tmp = 5.0;
-//        out.write(tmp);
-//        cout << "Time: " << sc_time_stamp() << endl;
-//        cout << "IN Value: " <<  tmp;
-//    }
-//
-//    SCA_CTOR(source){
-//
-//    }
-//};
-//
-//
-//SCA_TDF_MODULE(drain){
-//    sca_tdf::sca_in<double> in;
-//
-//    void processing() {
-//        cout << "Time: " << sc_time_stamp() << endl;
-//        cout << "OUT Value: " <<  in.read();
-//    }
-//
-//    SCA_CTOR(drain){
-//
-//    }
-//};
+SCA_TDF_MODULE(source){
+    sca_tdf::sca_out<double> out;
+
+
+    void processing() {
+        double tmp = 5.0;
+        out.write(tmp);
+        cout << "Time: " << sc_time_stamp() << endl;
+        cout << "IN Value: " <<  tmp;
+    }
+
+    SCA_CTOR(source){
+
+    }
+};
+
+
+SCA_TDF_MODULE(drain){
+    sca_tdf::sca_in<double> in;
+
+    void processing() {
+        cout << "Time: " << sc_time_stamp() << endl;
+        cout << "OUT Value: " <<  in.read();
+    }
+
+    SCA_CTOR(drain){
+
+    }
+};
 
 
 #endif //DCMOTOR_DC_MOTOR_COMPOSITION_H
