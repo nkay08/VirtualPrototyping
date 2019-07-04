@@ -16,7 +16,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 find_package(SystemC REQUIRED)
 find_package(SystemC_AMS REQUIRED)
 
-include_directories(${SYSTEMC_INCLUDE_DIR} ${SYSTEMC_AMS_INCLUDE_DIR})
+include_directories(${SYSTEMC_INCLUDE_DIR} ${SYSTEMCAMS_INCLUDE_DIR})
 
 
 FILE(GLOB SRCFILES src/*.cpp)
@@ -27,6 +27,6 @@ ${SRCFILES}
 )
 
 
-target_link_libraries( run ${SYSTEMC_LIBRARIES} ${SYSTEMC_AMS_LIBRARIES})
+target_link_libraries( run ${SYSTEMC_LIBRARIES} ${SYSTEMCAMS_LIBRARIES})
 
 #add_subdirectory(src)
