@@ -2,65 +2,42 @@
 #define DCMOTOR_SRC_DCMOTOR_H_
 
 #include <systemc.h>
-#include "systemc-ams"
+#include <systemc-ams.h>
+
+SCA_TDF_MODULE(dcmotor) {
+    sca_tdf::sca_in <double > in;
+    sca_tdf::sca_out<double> out;
 
 
-SCA_TDF_MODULE(dcmotor){
-	sca_tdf::sca_in<float> in;
-	sca_tdf::sca_in<float> out;
-	sca_tdf::sca_ltf_nd ltf;
+    //filter equation objects
+    sca_tdf::sca_ltf_nd ltf;
+    sca_util::sca_vector<double> s;
 
+    double h0;
+    double w0;
+    sca_util::sca_vector<double>  num;
+    sca_util::sca_vector<double>  den;
 
-	// sc_clock clk;
+    void initialize()
+    {
+        num(0) = h0;
+        den(0) = 1.0;
+        den(1) = 1/w0;
+    }
 
-
-	void initialize(){
-
-	}
-
-
-	void processing(){
-
-	}
-
-	SCA_CTOR(dcmotor)//:clk("clk", sc_time(1, SC_SEC))
-	{
-
-	}
-
-
+    void processing() {
+        double tmp;
+        tmp = ltf(num, den, s, in.read());
+        out.write(tmp);
+    }
+    SCA_CTOR(dcmotor) { //default parameter
+        h0 = 15.0;
+        w0= 20 * M_PI;
+    }
 
 
 };
 
 
-SC_MODULE(drain)
-{
-	sc_in<int> in;
 
-	SC_CTOR(drain)
-	{
-		SC_METHOD(processing);
-		sensitive << clk;
-	}
-
-	/*
-	SC_HAS_PROCESS(drain);
-	drain(sc_module_name n)
-	{
-		SC_METHOD(processing);
-		sensitive << in;
-		dont_initialize();
-
-	}
-	 */
-
-	void processing()
-	{
-		cout << "Time: " << sc_time_stamp() << endl;
-		cout << "Counter value: " <<  in.read();
-		cout << endl;
-
-	}
-
-};
+#endif /* DCMOTOR_SRC_INTEGRAL_H_ */

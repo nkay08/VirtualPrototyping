@@ -24,7 +24,7 @@ FILE(GLOB SRCFILES src/*.cpp)
 add_executable(run
 src/main.cpp  
 ${SRCFILES}
-)
+        src/test.h src/dc_motor_composition.h)
 
 
 target_link_libraries( run ${SYSTEMC_LIBRARIES} ${SYSTEMCAMS_LIBRARIES})

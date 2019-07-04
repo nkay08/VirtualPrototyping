@@ -12,20 +12,18 @@
 #include "systemc-ams"
 
 SCA_TDF_MODULE(pwm){
-	sca_tdf::sca_in<float> in;
-	sca_tdf::sca_in<float> out;
+	sca_tdf::sca_in<double> in;
+	sca_tdf::sca_out<double> out;
 
 
 
-private:
-//	double t_ramp;
-	double t_duty;
-//	double t_step;
-	float v_drv;
-public:
+    double t_ramp;
+    double t_duty;
+	sc_core::sc_time t_step;
+    double v_drv;
+    double t_period;
 
-
-	SCA_CTOR(pwm):in("in"),out("out"),t_ramp(0.05),t_step(5),v_drv(1.0){
+	SCA_CTOR(pwm):in("in"),out("out"), t_ramp(0.05), v_drv(1.0), t_period(5){
 
 	}
 
@@ -35,12 +33,12 @@ public:
 
 	void processing(){
 		float c = in.read();
-		t_duty = c * ( t_step - 2 * t_ramp  );
+		t_duty = c * ( t_step.to_double() - 2 * t_ramp  );
 		out.write(v_drv);
 	}
 
 	void set_attributes() {
-		allow_dynamic_tdf();
+//		allow_dynamic_tdf();
 		does_attribute_changes();
 		accept_attribute_changes();
 	}

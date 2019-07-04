@@ -12,10 +12,10 @@
 #include "systemc-ams"
 
 SCA_TDF_MODULE(derivative){
-	sca_tdf::sca_in<float> in;
-	sca_tdf::sca_in<float> out;
-	sca_util::sca_vector<float>	num, den, s;
-	double Kp;
+	sca_tdf::sca_in<double> in;
+	sca_tdf::sca_out<double> out;
+	sca_util::sca_vector<double>	num, den, s;
+	double Kd;
 
 	sca_tdf::sca_ltf_nd pid_derivative;
 
@@ -23,16 +23,16 @@ SCA_TDF_MODULE(derivative){
 
 	}
 
-	void setKd(float sKd){
+	void setKd(double sKd){
 		Kd = sKd;
 	}
 
 	void processing(){
-		float temp = pid_derivative( num,den,in.read() );
+		double temp = pid_derivative( num,den,in.read() );
 		out.write(temp);
 	}
 
-	SCA_CTOR(derivative):Kp(1/15.0){
+	SCA_CTOR(derivative):Kd(1){
 
 	}
 };
