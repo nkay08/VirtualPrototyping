@@ -6,7 +6,7 @@
 #define DCMOTOR_DC_MOTOR_COMPOSITION_H
 
 #include <systemc.h>
-#include "systemc-ams"
+#include <systemc-ams.h>
 #include "pid.h"
 #include "pwm.h"
 #include "dcmotor.h"
