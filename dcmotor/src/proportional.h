@@ -12,8 +12,8 @@
 #include "systemc-ams"
 
 SCA_TDF_MODULE(proportional){
-	sca_tdf::sca_in<double> in;
-	sca_tdf::sca_out<double> out;
+	sca_tdf::sca_in<double> in{"in"};
+	sca_tdf::sca_out<double> out{"out"};
 	sca_util::sca_vector<double>	num, den, s;
 	sca_tdf::sca_ltf_nd ltf;
 

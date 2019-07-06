@@ -5,8 +5,8 @@
 #include <systemc-ams.h>
 
 SCA_TDF_MODULE(dcmotor) {
-    sca_tdf::sca_in <double > in;
-    sca_tdf::sca_out<double> out;
+    sca_tdf::sca_in <double > in{"in"};
+    sca_tdf::sca_out<double> out{"out"};
 
 
     //filter equation objects

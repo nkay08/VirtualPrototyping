@@ -16,13 +16,13 @@
 
 
 SCA_TDF_MODULE(diff){
-	sca_tdf::sca_in<double> in_ref{"diff_in_ref"};
-	sca_tdf::sca_in<double> in_meas{"diff_in_meas"};
+	sca_tdf::sca_in<double> in_ref{"in_ref"};
+	sca_tdf::sca_in<double> in_meas{"in_meas"};
 
 //    sca_tdf::sca_out<double> out;
-    sca_tdf::sca_out<double> out_p{"diff_out_p"};
-    sca_tdf::sca_out<double> out_i{"diff_out_i"};
-    sca_tdf::sca_out<double> out_d{"diff_out_d"};
+    sca_tdf::sca_out<double> out_p{"out_p"};
+    sca_tdf::sca_out<double> out_i{"out_i"};
+    sca_tdf::sca_out<double> out_d{"out_d"};
 
 
 	SCA_CTOR(diff){

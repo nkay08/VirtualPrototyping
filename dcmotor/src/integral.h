@@ -20,8 +20,8 @@
 
 SCA_TDF_MODULE(integral){
 
-	sca_tdf::sca_in<double> in;
-	sca_tdf::sca_out<double> out;
+	sca_tdf::sca_in<double> in{"in"};
+	sca_tdf::sca_out<double> out{"out"};
 	sca_util::sca_vector<double>	num, den;
 	sca_tdf::sca_ltf_nd ltf;
 	sca_util::sca_vector<double> s;
