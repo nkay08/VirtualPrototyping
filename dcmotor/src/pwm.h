@@ -26,9 +26,9 @@ SCA_TDF_MODULE(pwm){
 
     pwm(
             sc_core::sc_module_name nm,
-            double v_drv_ = 5.0,
+            double v_drv_ = 1.0,
             const sca_core::sca_time& t_period_ = sca_core::sca_time(5.0, sc_core::SC_MS),
-            const sca_core::sca_time& t_ramp_ = sca_core::sca_time(0.5, sc_core::SC_MS),
+            const sca_core::sca_time& t_ramp_ = sca_core::sca_time(0.05, sc_core::SC_MS),
             const sca_core::sca_time& t_step_ = sca_core::sca_time(0.01, sc_core::SC_MS)
             )
 	:in("in"),out("out"), t_ramp(t_ramp_.to_seconds()), v_drv(v_drv_), t_period(t_period_.to_seconds()), t_step(t_step_)
@@ -70,7 +70,6 @@ SCA_TDF_MODULE(pwm){
         }
         else if (t_pos < t_ramp + t_duty + t_ramp) {
             value = -1.0 * (v_drv / t_ramp) * (t_pos - t_ramp - t_duty) + v_drv;
-
         }
         else {
             value = 0;
@@ -94,11 +93,17 @@ SCA_TDF_MODULE(pwm){
 		// Calculate time step till next activation
 		double dt = 0.0;
 		if ( t_pos < t_ramp ) // rising edge
-			dt = t_ramp - t_pos;
+
+		    // activate once more middle of rising edge
+            dt = t_pos < (t_ramp / 2) ? (t_ramp / 2) - t_pos : dt = t_ramp - t_pos;
+
 		else if ( t_pos < t_ramp + t_duty ) // plateau
 			dt = ( t_ramp + t_duty ) - t_pos;
 		else if ( t_pos < t_ramp + t_duty + t_ramp ) // falling edge
-			dt = ( t_ramp + t_duty + t_ramp ) - t_pos;
+
+		    // activate once more middle of falling edge
+		    dt = ( t_pos < t_ramp + t_duty + (t_ramp / 2) ) ? ( t_ramp + t_duty + (t_ramp / 2) ) - t_pos : ( t_ramp + t_duty + t_ramp ) - t_pos;
+
 		else // return to initial value
 			dt = t_period - t_pos;
 
