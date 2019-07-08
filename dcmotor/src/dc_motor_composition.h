@@ -44,7 +44,7 @@ SCA_TDF_MODULE(dcmc_source){
     }
 
     void set_attributes(){
-        set_timestep( t_step );
+//        set_timestep( t_step );
         accept_attribute_changes();
     }
 };
@@ -65,7 +65,7 @@ SCA_TDF_MODULE(dcmc_drain){
     }
 
     void set_attributes(){
-        set_timestep( t_step );
+//        set_timestep( t_step );
         accept_attribute_changes();
     }
 };
@@ -114,6 +114,7 @@ SC_MODULE(dc_motor_composition){
 
     dc_motor_composition(
             sc_core::sc_module_name nm,
+            bool dynamic_pwm,
             double h0_ = 15.0,
             double w0_ = 20 * M_PI,
             double Kp_ = 1.0/15.0,
@@ -127,7 +128,7 @@ SC_MODULE(dc_motor_composition){
             )
         {
             pid1 = new pid("pid", Kp_, Ki_, Kd_);
-            pwm1 = new pwm("pwm", v_drv_,  t_period_, t_ramp_, t_step_);
+            pwm1 = new pwm("pwm", v_drv_,  t_period_, t_ramp_, t_step_, dynamic_pwm);
             dcmotor1 = new dcmotor("dcmotor", h0_, w0_);
             splitter1 = new splitter("splitter");
 

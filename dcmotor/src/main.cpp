@@ -72,7 +72,18 @@ int sc_main(int argc, char * argv[]) {
 
 
     if (composition_test) {
-        dc_motor_composition dcmc("dcmc");
+        dc_motor_composition dcmc("dcmc",
+                true, // pwm dynamic
+                15.0,   //dcmotor h0
+                20 * M_PI,  //dcmotor w0
+                1.0/15.0,   // pid Kp
+                4*M_PI,     // pid Ki
+                0.0,        // pid Kd
+                1.0,         // pwm v_drv
+                sca_core::sca_time(5.0, sc_core::SC_MS), // pwm t_period
+                sca_core::sca_time(0.05, sc_core::SC_MS), // pwm t_ramp
+                sca_core::sca_time(0.01, sc_core::SC_MS) // pwm t_step    0.01
+                );
         dcmc_source dcmc_source1("dcmc_source");
         dcmc_drain dcmc_drain1("dcmc_drain");
 
