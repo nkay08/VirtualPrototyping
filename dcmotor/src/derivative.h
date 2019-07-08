@@ -18,6 +18,7 @@ SCA_TDF_MODULE(derivative){
 	double Kd;
 
 	sca_tdf::sca_ltf_nd pid_derivative;
+	sca_core::sca_time t_step;
 
 	void initialize(){
         num(0) = Kd;
@@ -33,9 +34,14 @@ SCA_TDF_MODULE(derivative){
             sc_core::sc_module_name nm,
             double Kd_ = 1.0
 	        )
-	:Kd(Kd_)
+	:Kd(Kd_), t_step(sca_core::sca_time(0.01, sc_core::SC_MS))
 	{
 	}
+
+    void set_attributes(){
+//            set_timestep( t_step );
+        accept_attribute_changes();
+    }
 
 };
 

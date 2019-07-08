@@ -24,8 +24,10 @@ SCA_TDF_MODULE(diff){
     sca_tdf::sca_out<double> out_i{"out_i"};
     sca_tdf::sca_out<double> out_d{"out_d"};
 
+    sca_core::sca_time t_step;
 
-	SCA_CTOR(diff){
+
+	SCA_CTOR(diff):t_step(sca_core::sca_time(0.01, sc_core::SC_MS)){
 
 	}
 
@@ -39,6 +41,11 @@ SCA_TDF_MODULE(diff){
         out_d.write( diff );
 	}
 
+    void set_attributes(){
+//            set_timestep( t_step );
+        accept_attribute_changes();
+    }
+
 };
 
 
@@ -50,7 +57,9 @@ SCA_TDF_MODULE(pidsum){
 	sca_tdf::sca_out<double> out{"sum_out"};
 
 
-	SCA_CTOR(pidsum){
+	sca_core::sca_time t_step;
+
+	SCA_CTOR(pidsum): t_step(sca_core::sca_time(0.01, sc_core::SC_MS)){
 
 	}
 
@@ -61,6 +70,11 @@ SCA_TDF_MODULE(pidsum){
 		out.write( in_p.read() + in_i.read() + in_d.read() );
 
 	}
+
+    void set_attributes(){
+//        set_timestep( t_step );
+        accept_attribute_changes();
+    }
 
 };
 

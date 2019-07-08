@@ -14,6 +14,15 @@ int sc_main(int argc, char * argv[]) {
 
     bool pid_test = false;
     bool pwm_test = false;
+    bool composition_test = false;
+
+    if (argc > 1){
+        if (argc <= 4) {
+            pid_test = std::stoi(argv[1]);
+            pwm_test = std::stoi(argv[2]);
+            composition_test = std::stoi(argv[3]);
+        }
+    }
 
     if (pwm_test) {
         pwm pwm1("pwm");
@@ -62,6 +71,32 @@ int sc_main(int argc, char * argv[]) {
     }
 
 
+    if (composition_test) {
+        dc_motor_composition dcmc("dcmc");
+        dcmc_source dcmc_source1("dcmc_source");
+        dcmc_drain dcmc_drain1("dcmc_drain");
+
+        sca_tdf::sca_signal<double> source2dcmc;
+        sca_tdf::sca_signal<double> dcmc2drain;
+
+        dcmc_source1.out(source2dcmc);
+
+        dcmc.in(source2dcmc);
+        dcmc.out(dcmc2drain);
+
+        dcmc_drain1.in(dcmc2drain);
+
+        sca_trace_file *tf=sca_create_vcd_trace_file("dcmc");
+        sca_trace(tf, source2dcmc, "in_ref");
+        sca_trace(tf, dcmc2drain, "out");
+
+        sca_trace(tf, dcmc.pid2pwm, "pid2pwm");
+        sca_trace(tf, dcmc.pwm2dcmotor, "pwm2dcmotor");
+        sca_trace(tf, dcmc.dcmotor2out, "dcmotor2out");
+        sca_trace(tf, dcmc.out2pid, "in_meas");
+
+        sc_start(100, SC_MS);
+    }
 
 return 0;
 }

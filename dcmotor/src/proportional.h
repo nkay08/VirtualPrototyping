@@ -19,12 +19,13 @@ SCA_TDF_MODULE(proportional){
 
 	double Kp;
 
+	sca_core::sca_time t_step;
 
 	proportional(
             sc_core::sc_module_name nm,
 	        double Kp_ = 1.0/15.0
 	        )
-	:Kp(Kp_)
+	:Kp(Kp_), t_step(sca_core::sca_time(0.01, sc_core::SC_MS))
 	{
 	}
 
@@ -36,6 +37,11 @@ SCA_TDF_MODULE(proportional){
     void processing(){
         double temp = ltf( num,den, s, in.read() );
         out.write(temp);
+    }
+
+    void set_attributes(){
+//            set_timestep( t_step );
+        accept_attribute_changes();
     }
 
 };

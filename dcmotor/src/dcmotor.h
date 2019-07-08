@@ -13,10 +13,11 @@ SCA_TDF_MODULE(dcmotor) {
     sca_tdf::sca_ltf_nd ltf;
     sca_util::sca_vector<double> s;
 
-    double h0;
-    double w0;
+    double h0, w0;
     sca_util::sca_vector<double>  num;
     sca_util::sca_vector<double>  den;
+
+    sca_core::sca_time t_step;
 
     void initialize()
     {
@@ -30,9 +31,20 @@ SCA_TDF_MODULE(dcmotor) {
         tmp = ltf(num, den, s, in.read());
         out.write(tmp);
     }
-    SCA_CTOR(dcmotor) { //default parameter
-        h0 = 15.0;
-        w0= 20 * M_PI;
+
+    dcmotor(
+            sc_core::sc_module_name nm,
+            double h0_ = 15.0,
+            double w0_ = 20 *  M_PI
+            )
+            : h0(h0_), w0(w0_), t_step(sca_core::sca_time(0.01, sc_core::SC_MS))
+            {
+            }
+
+    void set_attributes(){
+//            set_timestep( t_step );
+        out.set_delay(1);
+        accept_attribute_changes();
     }
 
 

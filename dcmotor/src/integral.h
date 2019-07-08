@@ -29,6 +29,8 @@ SCA_TDF_MODULE(integral){
 
 	sca_tdf::sca_ltf_nd pid_integral;
 
+	sca_core::sca_time t_step;
+
 	void initialize(){
 		num(0) = Ki;
 		den(0) = 1.0 ;
@@ -43,9 +45,14 @@ SCA_TDF_MODULE(integral){
             sc_core::sc_module_name nm,
             double Ki_ = 4*M_PI
 	        )
-	:Ki(Ki_)
+	:Ki(Ki_), t_step(sca_core::sca_time(0.01, sc_core::SC_MS))
 	{
 	}
+
+    void set_attributes(){
+//            set_timestep( t_step );
+        accept_attribute_changes();
+    }
 };
 
 
