@@ -39,7 +39,7 @@ SCA_TDF_MODULE(dcmc_source){
 //        cout << "IN Value: " <<  tmp;
     }
 
-    SCA_CTOR(dcmc_source): value(0.5), t_step(sca_core::sca_time(0.01, sc_core::SC_MS)){
+    SCA_CTOR(dcmc_source): value(1.0), t_step(sca_core::sca_time(0.01, sc_core::SC_MS)){
 
     }
 

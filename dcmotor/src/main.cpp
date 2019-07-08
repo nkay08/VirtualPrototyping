@@ -90,12 +90,13 @@ int sc_main(int argc, char * argv[]) {
         sca_trace(tf, source2dcmc, "in_ref");
         sca_trace(tf, dcmc2drain, "out");
 
+        sca_trace(tf, dcmc.pid1->diff2p, "diff");
         sca_trace(tf, dcmc.pid2pwm, "pid2pwm");
         sca_trace(tf, dcmc.pwm2dcmotor, "pwm2dcmotor");
         sca_trace(tf, dcmc.dcmotor2out, "dcmotor2out");
         sca_trace(tf, dcmc.out2pid, "in_meas");
 
-        sc_start(100, SC_MS);
+        sc_start(300, SC_MS);
     }
 
 return 0;
