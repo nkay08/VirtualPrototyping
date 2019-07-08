@@ -30,7 +30,6 @@ SCA_TDF_MODULE(diff){
 	}
 
 	void initialize(){
-
 	}
 	void processing(){
 		double diff = in_ref.read() - in_meas.read();
@@ -84,17 +83,21 @@ SC_MODULE(pid){
 	pidsum* pidsum1;
 
 	void initialize(){
-
 	}
 
 	void processing(){
 	}
 
-	SC_CTOR(pid)
+	pid(
+        sc_core::sc_module_name nm,
+        double Kp_ = 1.0/15.0,
+        double Ki_ = 4*M_PI,
+        double Kd_ = 0.0
+	        )
 	{
-	    p = new proportional("p");
-	    i = new integral("i");
-	    d = new derivative("d");
+	    p = new proportional("p", Kp_);
+	    i = new integral("i", Ki_);
+	    d = new derivative("d", Kd_);
 	    diff1 = new diff("diff");
 	    pidsum1 = new pidsum("pidsum");
 
@@ -122,18 +125,71 @@ SC_MODULE(pid){
 
 
 	}
-
-	void setKp(double sKp){
-		p->setKp(sKp);
-	}
-
-	void setKi(double sKi){
-		i->setKi(sKi);
-	}
-
-	void setKd(double sKd){
-		d->setKd(sKd);
-	}
 };
+
+
+SCA_TDF_MODULE(pid_source){
+        sca_tdf::sca_out<double> out_meas;
+        sca_tdf::sca_out<double> out_ref;
+
+        double value_meas;
+        double value_ref;
+
+        sc_core::sc_time t_step;
+
+        void processing(){
+            double t = get_time().to_seconds() * 1000;
+
+            if  (t > 10) {
+                value_ref = 0.5;
+            }
+            if ( t > 20) {
+                value_meas = 1.0;
+            }
+            if ( t > 30 ) {
+                value_ref = 0;
+            }
+
+//            cout << "time = " << t << ", value_ref = " << value_ref << ", value_meas = " << value_meas << endl;
+
+            out_meas.write(value_meas);
+            out_ref.write(value_ref);
+//            cout << "Time: " << sc_time_stamp() << endl;
+//            cout << "IN Value: " <<  value;
+        }
+
+        void set_attributes(){
+            set_timestep( t_step );
+            accept_attribute_changes();
+        }
+
+
+        pid_source(
+                sc_core::sc_module_name nm,
+                const sca_core::sca_time& t_step_ = sca_core::sca_time(5, sc_core::SC_MS)
+                )
+        :value_ref(0.7), value_meas(0.5), t_step(t_step_)
+        {
+        }
+};
+
+
+SCA_TDF_MODULE(pid_drain) {
+        sca_tdf::sca_in<double> in;
+
+        void set_attributes(){
+            accept_attribute_changes();
+        }
+
+        void processing() {
+            double tmp = in.read();
+//        cout << "Time: " << sc_time_stamp() << endl;
+//        cout << "OUT Value: " <<  tmp;
+        };
+
+        SCA_CTOR(pid_drain){
+        }
+};
+
 
 #endif /* DCMOTOR_SRC_PID_H_ */

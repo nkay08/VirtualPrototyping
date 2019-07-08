@@ -20,21 +20,23 @@ SCA_TDF_MODULE(derivative){
 	sca_tdf::sca_ltf_nd pid_derivative;
 
 	void initialize(){
-
-	}
-
-	void setKd(double sKd){
-		Kd = sKd;
+        num(0) = Kd;
+        den(0) = 1.0 ;
 	}
 
 	void processing(){
-		double temp = pid_derivative( num,den,in.read() );
+		double temp = pid_derivative( num, den, s, in.read() );
 		out.write(temp);
 	}
 
-	SCA_CTOR(derivative):Kd(1){
-
+	derivative(
+            sc_core::sc_module_name nm,
+            double Kd_ = 1.0
+	        )
+	:Kd(Kd_)
+	{
 	}
+
 };
 
 

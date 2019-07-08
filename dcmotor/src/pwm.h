@@ -17,11 +17,10 @@ SCA_TDF_MODULE(pwm){
 
 
 
-    double t_ramp;
-    double t_duty;
-	sc_core::sc_time t_step;
+    double t_ramp, t_duty, t_period;
     double v_drv;
-    double t_period;
+	sc_core::sc_time t_step;
+
 
 
     pwm(
@@ -125,6 +124,7 @@ SCA_TDF_MODULE(pwm_source){
     double value;
 
     void processing(){
+        // time in milliseconds
         double t = get_time().to_seconds() * 1000;
 
         if  (t > 10) {

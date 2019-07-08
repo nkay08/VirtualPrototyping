@@ -34,17 +34,17 @@ SCA_TDF_MODULE(integral){
 		den(0) = 1.0 ;
 	}
 
-	void setKi(double sKi){
-		Ki = sKi;
-	}
-
 	void processing(){
 		double indouble = in.read();
-		out.write( pid_integral( num,den,in.read() ) );
+		out.write( pid_integral( num, den, s, in.read() ) );
 	}
 
-	SCA_CTOR(integral):Ki(4*M_PI){
-
+	integral(
+            sc_core::sc_module_name nm,
+            double Ki_ = 4*M_PI
+	        )
+	:Ki(Ki_)
+	{
 	}
 };
 
