@@ -35,3 +35,4 @@
         - `./cmakeNormalClang.sh`
         - `./cmakeVoidClang.sh`
 - `make`
+- executable binary is `./bin/run`
