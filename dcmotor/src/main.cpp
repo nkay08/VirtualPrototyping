@@ -14,10 +14,10 @@ int sc_main(int argc, char * argv[]) {
 
     bool pid_test = false;
     bool pwm_test = false;
-    bool composition_test = false;
+    bool composition_test = true;
 
     if (argc > 1){
-        if (argc <= 4) {
+        if (argc >= 4) {
             pid_test = std::stoi(argv[1]);
             pwm_test = std::stoi(argv[2]);
             composition_test = std::stoi(argv[3]);
@@ -72,8 +72,20 @@ int sc_main(int argc, char * argv[]) {
 
 
     if (composition_test) {
+        bool dynamic = false;
+        double t_step = 0.1;
+        double duration = 300;
+        if (argc >= 5){
+            dynamic = std::stoi(argv[4]);
+        }
+        if (argc >= 6) {
+            t_step = std::stod(argv[5]);
+        }
+        if (argc >= 7) {
+            duration = std::stod(argv[6]);
+        }
         dc_motor_composition dcmc("dcmc",
-                true, // pwm dynamic
+                dynamic, // pwm dynamic
                 15.0,   //dcmotor h0
                 20 * M_PI,  //dcmotor w0
                 1.0/15.0,   // pid Kp
@@ -82,7 +94,7 @@ int sc_main(int argc, char * argv[]) {
                 1.0,         // pwm v_drv
                 sca_core::sca_time(5.0, sc_core::SC_MS), // pwm t_period
                 sca_core::sca_time(0.05, sc_core::SC_MS), // pwm t_ramp
-                sca_core::sca_time(0.01, sc_core::SC_MS) // pwm t_step    0.01
+                sca_core::sca_time(t_step, sc_core::SC_MS) // pwm t_step    0.01
                 );
         dcmc_source dcmc_source1("dcmc_source");
         dcmc_drain dcmc_drain1("dcmc_drain");
@@ -107,7 +119,7 @@ int sc_main(int argc, char * argv[]) {
         sca_trace(tf, dcmc.dcmotor2out, "dcmotor2out");
         sca_trace(tf, dcmc.out2pid, "in_meas");
 
-        sc_start(300, SC_MS);
+        sc_start(duration, SC_MS);
     }
 
 return 0;
