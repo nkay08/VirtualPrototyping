@@ -14,7 +14,7 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 find_package(SystemC REQUIRED)
-find_package(SystemCAMS REQUIRED)
+find_package(SystemC_AMS REQUIRED)
 
 include_directories(${SYSTEMC_INCLUDE_DIR} ${SYSTEMC_AMS_INCLUDE_DIR})
 
