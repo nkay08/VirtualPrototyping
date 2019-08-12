@@ -22,7 +22,7 @@ include_directories(${SYSTEMC_INCLUDE_DIR} ${SYSTEMCAMS_INCLUDE_DIR})
 FILE(GLOB SRCFILES src/*.cpp)
 
 add_executable(run
-src/main.cpp  
+        ../dcmotor_tlm/src/main.cpp
 ${SRCFILES}
 )
 
