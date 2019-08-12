@@ -10,6 +10,11 @@
 #include "pid.h"
 #include "pwm.h"
 #include "dcmotor.h"
+#include "dcmotor_initiator.h"
+#include "dcmotor_target.h"
+#include <tlm.h>
+#include <tlm_utils/simple_initiator_socket.h>
+#include <tlm_utils/simple_target_socket.h>
 
 
 SCA_TDF_MODULE(dcmc_source){
@@ -110,6 +115,9 @@ SC_MODULE(dc_motor_composition){
     dcmotor* dcmotor1;
     splitter* splitter1;
 
+    dcmotor_initiator* initiator;
+    dcmotor_target* target;
+
     // TODO DELAY
 
     dc_motor_composition(
@@ -154,6 +162,8 @@ SC_MODULE(dc_motor_composition){
                 sca_trace(tf, pwm2dcmotor, "pwm2dcmotor");
                 sca_trace(tf, dcmotor2out, "dcmotor2out");
             }
+
+
         }
 
 };

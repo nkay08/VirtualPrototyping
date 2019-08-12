@@ -139,6 +139,49 @@ SC_MODULE(pid){
 
 
 	}
+
+	void setP(double value){
+	    p->Kp = value;
+	}
+
+	void setI(double value){
+	    i->Ki = value;
+	}
+
+	void setD(double value){
+	    d->Kd = value;
+	}
+
+	void disableP(){
+	    setP(0.0);
+	}
+
+	void disableI(){
+	    setI(0.0);
+	}
+
+	void disableD(){
+	    setD(0.0);
+	}
+
+	void enableP(double value = 1.0/15.0){
+	    setP(value);
+	}
+
+	void enableI(double value = 4*M_PI) {
+	    setI(value);
+	}
+
+	void enableD(double value = 0.0){
+	    setD(value);
+	}
+
+	void hard_reset(){
+	    setP(0.0);
+        setI(0.0);
+	    setD(0.0);
+	}
+
 };
 
 
