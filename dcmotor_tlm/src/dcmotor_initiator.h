@@ -2,8 +2,8 @@
 // Created by nkay on 8/13/19.
 //
 
-#ifndef SBITCOUNTER_DCMOTOR_TLM_H
-#define SBITCOUNTER_DCMOTOR_TLM_H
+#ifndef DCMOTOR_INITIATOR_H
+#define DCMOTOR_INITIATOR_H
 
 #include <systemc.h>
 #include <tlm.h>
@@ -31,6 +31,7 @@ SC_MODULE(dcmotor_initiator){
         sc_time delay;
 
         bool run_test = false;
+        pid* pid1;
 
 //        dcmotor_initiator(sc_module name, sc_time time_delay=sc_time(50, SC_NS))
         SC_CTOR(dcmotor_initiator)
@@ -133,6 +134,9 @@ SC_MODULE(dcmotor_initiator){
             send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
 
             assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
+            assert(pid1->p->Kp == 0);
+            assert(pid1->i->Ki == 0);
+            assert(pid1->d->Kd == 0);
             cout << "done test " << test_num << endl;
             test_num ++;
 
@@ -198,6 +202,7 @@ SC_MODULE(dcmotor_initiator){
             assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
             temp_data = *(trans->get_data_ptr());
             assert(temp_data.to_int() == 0);
+            assert(pid1->p->Kp == 0);
             cout << "done test " << test_num << endl;
             test_num ++;
             wait(delay);
@@ -208,7 +213,7 @@ SC_MODULE(dcmotor_initiator){
             adr = PID_CR_ADR;
             data_bv = "10";
             send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
-
+            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
             cout << "done test " << test_num << endl;
             test_num ++;
             wait(delay);
@@ -219,13 +224,14 @@ SC_MODULE(dcmotor_initiator){
             adr = PID_CHGR1_ADR;
             data_bv = 5;
             send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
-
+            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
+            assert(pid1->p->Kp == 0);
             cout << "done test " << test_num << endl;
             test_num ++;
             wait(delay);
 
 
-            // read P again should still be 0
+            // read P again should be value
             cout << "start test " << test_num << endl;
             adr = PID_CHGR1_ADR;
             data_bv = "0";
@@ -259,6 +265,7 @@ SC_MODULE(dcmotor_initiator){
             send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
 
             assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
+            assert(pid1->p->Kp == 5);
             cout << "done test " << test_num << endl;
             test_num ++;
             wait(delay);
@@ -295,6 +302,7 @@ SC_MODULE(dcmotor_initiator){
             send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
 
             assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
+            assert(pid1->p->Kp == 0);
             temp_data = *(trans->get_data_ptr());
             assert(temp_data[0] == 0);
             cout << "done test " << test_num << endl;
@@ -308,228 +316,4 @@ SC_MODULE(dcmotor_initiator){
 
 
 
-SC_MODULE(dcmotor_target)
-        {
-            pid* pid1;
-        int memsize = 80 + 32;
-//    int* mem;
-//    sc_bv<memsize> mem = "0";
-        sc_bv<8> PID_CR = "0";
-        sc_bv<32> PID_CHER = "0";
-        sc_bv<32> PID_CHDR = "0";
-        sc_bv<32> PID_CHSR = "0";
-        sc_bv<32> PID_CHGR1 = "0";
-        sc_bv<32> PID_CHGR2 = "0";
-        sc_bv<32> PID_CHGR3 = "0";
-
-        int base_adr = 0x40038000;
-
-        tlm_utils::simple_target_socket<dcmotor_target> socket;
-
-//        dcmotor_target(sc_module name, int memsize_ = 0)
-        SC_CTOR(dcmotor_target)
-        : socket("socket")
-        {
-            socket.register_b_transport(this, &dcmotor_target::b_transport);
-
-//        if (memsize_ > 0)
-//        {
-//            memsize_= memsize_;
-//        }
-//        mem = new int[memsize];
-//        for (int i = 0; i < memsize; i++)
-//        {
-//            mem[i] = 0;
-//            //randomized data
-////            mem[i] = 0xAA000000 | (rand() % 256);
-//        }
-
-
-        }
-
-
-        virtual void b_transport( tlm::tlm_generic_payload& trans, sc_time& delay )
-        {
-            tlm::tlm_command cmd = trans.get_command();
-            sc_dt::uint64    adr = trans.get_address();
-            unsigned char*   ptr = trans.get_data_ptr();
-            unsigned int     len = trans.get_data_length();
-            unsigned char*   byt = trans.get_byte_enable_ptr();
-            unsigned int     wid = trans.get_streaming_width();
-
-            if (adr >= sc_dt::uint64(memsize) || byt != 0 || len > 32 || wid < len)
-                SC_REPORT_ERROR("TLM-2", "Target does not support given generic payload transaction");
-
-            if (adr + len > memsize)
-//            if (false)
-            {
-                trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
-            }
-            else
-            {
-                if ( cmd == tlm::TLM_READ_COMMAND )
-                {
-
-
-//                memcpy(ptr, &mem[adr], len);
-
-                    int data = 5;
-                    switch (adr)
-                    {
-                        case PID_CHSR_ADR:
-                        {
-                            data = PID_CHSR.to_int();
-                            break;
-                        }
-
-                        case PID_CHGR1_ADR:
-                        {
-                            data = PID_CHGR1.to_int();
-                            break;
-                        }
-
-                        case PID_CHGR2_ADR:
-                        {
-                            data = PID_CHGR2.to_int();
-                            break;
-                        }
-
-                        case PID_CHGR3_ADR:
-                        {
-                            data = PID_CHGR3.to_int();
-                            break;
-                        }
-
-                        default:
-                        {
-                            trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
-                            break;
-                        }
-                    }
-
-                    trans.set_data_ptr(reinterpret_cast<unsigned char*>(&data));
-
-                }
-                else if ( cmd == tlm::TLM_WRITE_COMMAND )
-                {
-
-//                memcpy(&mem[adr], ptr, len);
-                    switch (adr)
-                    {
-                        // start_configuration/ reset
-                        case PID_CR_ADR :
-                        {
-                            sc_bv<8> temp = *ptr;
-                            PID_CR = temp.to_int();
-                            if (temp[0])
-                            {
-                                pid1->hard_reset();
-                            }
-                            break;
-                        }
-                            // enable channels
-                        case PID_CHER_ADR :
-                        {
-                            // if configuration started
-                            if (PID_CR[1]){
-
-                                // set enabled register
-                                sc_bv<32> temp = *ptr;
-                                PID_CHER = temp.to_int();
-                                // status = old_status_value OR new_enabled_value
-                                sc_bv<32> res = (PID_CHSR | PID_CHER);
-                                PID_CHSR = res.to_int();
-                                decide_action();
-                            }
-                            break;
-                        }
-
-                            // disable channels
-                        case PID_CHDR_ADR :
-                        {
-                            // if configuration started
-                            if (PID_CR[1]) {
-                                // set enabled register
-                                sc_bv<32> temp = *ptr;
-                                PID_CHDR = temp.to_int();
-                                // status = old_status_value AND NOT new_disabled_value
-                                sc_bv<32> res = (PID_CHSR & ~ PID_CHDR);
-                                PID_CHSR = res.to_int();
-                                decide_action();
-                            }
-                            break;
-                        }
-                        case PID_CHGR1_ADR :
-                        {
-                            // if configuration started
-                            if (PID_CR[1]) {
-                                // set Kp
-                                sc_bv<32> temp = *ptr;
-                                PID_CHGR1 = temp.to_int();
-                                decide_action();
-                            }
-                            break;
-                        }
-                        case PID_CHGR2_ADR :
-                        {
-                            // if configuration started
-                            if (PID_CR[1]) {
-                                // set Ki
-                                sc_bv<32> temp = *ptr;
-                                PID_CHGR2 = temp.to_int();
-                                decide_action();
-                            }
-                            break;
-                        }
-                        case PID_CHGR3_ADR :
-                        {
-                            // if configuration started
-                            if (PID_CR[1]) {
-                                // set Kd
-                                sc_bv<32> temp = *ptr;
-                                PID_CHGR2 = temp.to_int();
-                                decide_action();
-                            }
-                            break;
-                        }
-
-                        default :
-                        {
-                            trans.set_response_status(tlm::TLM_ADDRESS_ERROR_RESPONSE);
-                            break;
-                        }
-
-                    }
-                }
-
-
-                trans.set_response_status( tlm::TLM_OK_RESPONSE );
-            }
-
-        }
-
-        void decide_action(){
-            // start configuration
-            if (PID_CR[1]){
-
-                if (PID_CHSR[0])
-                {
-                    pid1->enableP(PID_CHGR1.to_int());
-                }
-                if (PID_CHSR[1])
-                {
-                    pid1->enableI(PID_CHGR2.to_int());
-                }
-                if (PID_CHSR[2])
-                {
-                    pid1->enableD(PID_CHGR3.to_int());
-                }
-
-
-            }
-        }
-
-
-        };
-
-#endif //SBITCOUNTER_DCMOTOR_TLM_H
+#endif //DCMOTOR_INITIATOR_H

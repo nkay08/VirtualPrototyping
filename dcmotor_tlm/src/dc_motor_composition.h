@@ -10,7 +10,8 @@
 #include "pid.h"
 #include "pwm.h"
 #include "dcmotor.h"
-#include "dcmotor_tlm.h"
+#include "dcmotor_initiator.h"
+#include "dcmotor_target.h"
 #include <tlm.h>
 #include <tlm_utils/simple_initiator_socket.h>
 #include <tlm_utils/simple_target_socket.h>
@@ -158,6 +159,10 @@ SC_MODULE(dc_motor_composition){
             initiator = new dcmotor_initiator("initiator");
             target = new dcmotor_target("target");
             target->pid1 = pid1;
+            if (test_tlm){
+                initiator->pid1 = pid1;
+            }
+
 
             if (test_tlm)
             {
