@@ -10,8 +10,7 @@
 #include "pid.h"
 #include "pwm.h"
 #include "dcmotor.h"
-#include "dcmotor_initiator.h"
-#include "dcmotor_target.h"
+#include "dcmotor_tlm.h"
 #include <tlm.h>
 #include <tlm_utils/simple_initiator_socket.h>
 #include <tlm_utils/simple_target_socket.h>
@@ -132,7 +131,8 @@ SC_MODULE(dc_motor_composition){
             const sca_core::sca_time& t_period_ = sca_core::sca_time(5.0, sc_core::SC_MS),
             const sca_core::sca_time& t_ramp_ = sca_core::sca_time(0.05, sc_core::SC_MS),
             const sca_core::sca_time& t_step_ = sca_core::sca_time(0.01, sc_core::SC_MS),
-            bool trace = false
+            bool trace = false,
+            bool test_tlm = false
             )
         {
             pid1 = new pid("pid", Kp_, Ki_, Kd_);
@@ -154,6 +154,17 @@ SC_MODULE(dc_motor_composition){
             splitter1->out1(out2pid);
 
             splitter1->out2(out);
+
+            initiator = new dcmotor_initiator("initiator");
+            target = new dcmotor_target("target");
+            target->pid1 = pid1;
+
+            if (test_tlm)
+            {
+                initiator->run_test = true;
+            }
+
+            initiator->socket.bind(target->socket);
 
             if (trace) {
                 sca_trace_file *tf=sca_create_vcd_trace_file("dcmc_inner");

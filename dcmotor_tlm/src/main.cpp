@@ -94,7 +94,9 @@ int sc_main(int argc, char * argv[]) {
                 1.0,         // pwm v_drv
                 sca_core::sca_time(5.0, sc_core::SC_MS), // pwm t_period
                 sca_core::sca_time(0.05, sc_core::SC_MS), // pwm t_ramp
-                sca_core::sca_time(t_step, sc_core::SC_MS) // pwm t_step    0.01
+                sca_core::sca_time(t_step, sc_core::SC_MS), // pwm t_step    0.01
+                true,
+                true
                 );
         dcmc_source dcmc_source1("dcmc_source");
         dcmc_drain dcmc_drain1("dcmc_drain");
