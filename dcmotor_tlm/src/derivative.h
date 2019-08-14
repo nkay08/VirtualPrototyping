@@ -26,6 +26,7 @@ SCA_TDF_MODULE(derivative){
 	}
 
 	void processing(){
+        num(0) = Kd;
 		double temp = pid_derivative( num, den, s, in.read() );
 		out.write(temp);
 	}

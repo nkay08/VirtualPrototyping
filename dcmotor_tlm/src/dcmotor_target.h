@@ -11,6 +11,26 @@
 #include "tlm_utils/simple_initiator_socket.h"
 #include "pid.h"
 
+inline std::string getCurrentDateTime( std::string s ){
+    time_t now = time(0);
+    struct tm  tstruct;
+    char  buf[80];
+    tstruct = *localtime(&now);
+    if(s=="now")
+        strftime(buf, sizeof(buf), "%Y-%m-%d %X", &tstruct);
+    else if(s=="date")
+        strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
+    return std::string(buf);
+};
+inline void Logger( std::string logMsg ){
+
+    std::string filePath = "./log_"+getCurrentDateTime("date")+".txt";
+    std::string now = getCurrentDateTime("now");
+    ofstream ofs(filePath.c_str(), std::ios_base::out | std::ios_base::app );
+    ofs << now << '\t' << logMsg << '\n';
+    ofs.close();
+}
+
 #define PID_CR_ADR 0x00
 #define PID_CHER_ADR 0x04
 #define PID_CHDR_ADR 0x14
@@ -217,7 +237,19 @@ SC_MODULE(dcmotor_target)
 
                 trans.set_response_status( tlm::TLM_OK_RESPONSE );
             }
-
+//            freopen("log.txt", "w", stdout);
+//            cout << "message" << endl;
+            Logger("------------------------------------------------------------------------------------------");
+            Logger(sc_time_stamp().to_string());
+            Logger("PID_CR: " + PID_CR.to_string());
+            Logger("PID_CHSR: " + PID_CHSR.to_string());
+            Logger("PID_CHER: " + PID_CHER.to_string());
+            Logger("PID_CHDR: " + PID_CHDR.to_string());
+            Logger("PID_CHGR1: " + PID_CHGR1.to_string());
+            Logger("PID_CHGR2: " + PID_CHGR2.to_string());
+            Logger("PID_CHGR3: " + PID_CHGR3.to_string());
+            Logger("Real PID coefficents: K=" + std::to_string(pid1->p->Kp) + ", Ki=" + std::to_string(pid1->i->Ki) + ", Kd=" + std::to_string(pid1->d->Kd) );
+            Logger("------------------------------------------------------------------------------------------");
         }
 
         void decide_action(){

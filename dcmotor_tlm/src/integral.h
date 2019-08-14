@@ -37,6 +37,7 @@ SCA_TDF_MODULE(integral){
 	}
 
 	void processing(){
+        num(0) = Ki;
 		out.write( pid_integral( num, den, s, in.read() ) );
 	}
 

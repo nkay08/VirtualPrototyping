@@ -75,6 +75,8 @@ int sc_main(int argc, char * argv[]) {
         bool dynamic = false;
         double t_step = 0.1;
         double duration = 300;
+        bool inner_trace = false;
+        bool test_tlm = true;
         if (argc >= 5){
             dynamic = std::stoi(argv[4]);
         }
@@ -83,6 +85,12 @@ int sc_main(int argc, char * argv[]) {
         }
         if (argc >= 7) {
             duration = std::stod(argv[6]);
+        }
+        if (argc >= 8) {
+            inner_trace = std::stod(argv[7]);
+        }
+        if (argc >= 9) {
+            test_tlm = std::stod(argv[8]);
         }
         dc_motor_composition dcmc("dcmc",
                 dynamic, // pwm dynamic
@@ -95,8 +103,8 @@ int sc_main(int argc, char * argv[]) {
                 sca_core::sca_time(5.0, sc_core::SC_MS), // pwm t_period
                 sca_core::sca_time(0.05, sc_core::SC_MS), // pwm t_ramp
                 sca_core::sca_time(t_step, sc_core::SC_MS), // pwm t_step    0.01
-                true,
-                true
+                inner_trace,
+                test_tlm
                 );
         dcmc_source dcmc_source1("dcmc_source");
         dcmc_drain dcmc_drain1("dcmc_drain");

@@ -35,6 +35,7 @@ SCA_TDF_MODULE(proportional){
     }
 
     void processing(){
+	    num(0) = Kp;
         double temp = ltf( num,den, s, in.read() );
         out.write(temp);
     }

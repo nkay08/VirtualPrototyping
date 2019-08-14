@@ -37,7 +37,7 @@ SC_MODULE(dcmotor_initiator){
         SC_CTOR(dcmotor_initiator)
         : socket("socket")
         {
-            delay = sc_time(50, SC_NS);
+            delay = sc_time(10, SC_MS);
             SC_THREAD(thread_process);
 //            socket.register_nb_transport_bw(this, &dcmotor_initiator::nb_transport_bw);
         }
@@ -130,6 +130,22 @@ SC_MODULE(dcmotor_initiator){
             cout << "start test " << test_num << endl;
             adr = PID_CR_ADR;
             data_bv = "01";
+
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
+
+            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
+            assert(pid1->p->Kp == 0);
+            assert(pid1->i->Ki == 0);
+            assert(pid1->d->Kd == 0);
+            cout << "done test " << test_num << endl;
+            test_num ++;
+
+            wait(delay);
+
+            // stop reset pid
+            cout << "start test " << test_num << endl;
+            adr = PID_CR_ADR;
+            data_bv = "00";
 
             send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
 
