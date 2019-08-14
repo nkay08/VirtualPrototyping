@@ -47,6 +47,106 @@ SC_MODULE(dcmotor_initiator){
 
         }
 
+        std::tuple<tlm::tlm_generic_payload*, bool> pid_configure(bool enable= true)
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "00";
+            if (enable) temp[1] = 1;
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, temp.to_int(), PID_CR_ADR);
+            return std::make_tuple(trans, enable);
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, bool> pid_reset(bool enable= true)
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "00";
+            if (enable) temp[0] = 1;
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, temp.to_int(), PID_CR_ADR);
+            return std::make_tuple(trans, enable);
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, std::string> pid_status()
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "0";
+            send_transaction(trans, tlm::TLM_READ_COMMAND, temp.to_int(), PID_CHSR_ADR);
+            sc_bv<32> temp_data = *(trans->get_data_ptr());
+            return std::make_tuple(trans, temp_data.to_string());
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, bool> pid_enable(bool cgr1= false, bool cgr2= false, bool cgr3= false)
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "000";
+            if (cgr1) temp[0] = 1;
+            if (cgr2) temp[1] = 1;
+            if (cgr3) temp[2] = 1;
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, temp.to_int(), PID_CHER_ADR);
+            return std::make_tuple(trans, true);
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, bool> pid_disable(bool cgr1= false, bool cgr2= false, bool cgr3= false)
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "000";
+            if (cgr1) temp[0] = 1;
+            if (cgr2) temp[1] = 1;
+            if (cgr3) temp[2] = 1;
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, temp.to_int(), PID_CHDR_ADR);
+            return std::make_tuple(trans, true);
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, int> pid_gain1(int gain = 0)
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = gain;
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, temp.to_int(), PID_CHGR1_ADR);
+            return std::make_tuple(trans, gain);
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, int> pid_gain2(int gain = 0)
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = gain;
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, temp.to_int(), PID_CHGR2_ADR);
+            return std::make_tuple(trans, gain);
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, int> pid_gain3(int gain = 0)
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = gain;
+            send_transaction(trans, tlm::TLM_WRITE_COMMAND, temp.to_int(), PID_CHGR3_ADR);
+            return std::make_tuple(trans, gain);
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, int> pid_get_gain1()
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "0";
+            send_transaction(trans, tlm::TLM_READ_COMMAND, temp.to_int(), PID_CHGR1_ADR);
+            sc_bv<32> temp_data = *(trans->get_data_ptr());
+            return std::make_tuple(trans, temp_data.to_int());
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, int> pid_get_gain2()
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "0";
+            send_transaction(trans, tlm::TLM_READ_COMMAND, temp.to_int(), PID_CHGR2_ADR);
+            sc_bv<32> temp_data = *(trans->get_data_ptr());
+            return std::make_tuple(trans, temp_data.to_int());
+        }
+
+        std::tuple<tlm::tlm_generic_payload*, int> pid_get_gain3()
+        {
+            tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
+            sc_bv<32> temp = "0";
+            send_transaction(trans, tlm::TLM_READ_COMMAND, temp.to_int(), PID_CHGR3_ADR);
+            sc_bv<32> temp_data = *(trans->get_data_ptr());
+            return std::make_tuple(trans, temp_data.to_int());
+        }
+
         void thread_process()
         {
             tlm::tlm_generic_payload* trans = new tlm::tlm_generic_payload;
@@ -122,208 +222,211 @@ SC_MODULE(dcmotor_initiator){
         }
 
         void test() {
-            tlm::tlm_generic_payload *trans = new tlm::tlm_generic_payload;
-            int adr = 0;
+//            tlm::tlm_generic_payload *trans = new tlm::tlm_generic_payload;
+//            int adr = 0;
             int test_num = 1;
 
-            // reset pid
-            cout << "start test " << test_num << endl;
-            adr = PID_CR_ADR;
-            data_bv = "01";
+            {
+                // reset pid
+                cout << "start test " << test_num << endl;
+                auto tple = pid_reset(true);
+                auto ttrans = std::get<0>(tple);
 
-            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                assert(pid1->p->Kp == 0);
+                assert(pid1->i->Ki == 0);
+                assert(pid1->d->Kd == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            assert(pid1->p->Kp == 0);
-            assert(pid1->i->Ki == 0);
-            assert(pid1->d->Kd == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
+            {
+                // stop reset pid
+                cout << "start test " << test_num << endl;
 
-            wait(delay);
+                auto tple = pid_reset(false);
+                auto ttrans = std::get<0>(tple);
 
-            // stop reset pid
-            cout << "start test " << test_num << endl;
-            adr = PID_CR_ADR;
-            data_bv = "00";
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                assert(pid1->p->Kp == 0);
+                assert(pid1->i->Ki == 0);
+                assert(pid1->d->Kd == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
+            {
+                // read P
+                cout << "start test " << test_num << endl;
+                auto tple = pid_get_gain1();
+                auto ttrans = std::get<0>(tple);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data.to_int() == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            assert(pid1->p->Kp == 0);
-            assert(pid1->i->Ki == 0);
-            assert(pid1->d->Kd == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
+            {
+                // read I
+                cout << "start test " << test_num << endl;
+                auto tple = pid_get_gain2();
+                auto ttrans = std::get<0>(tple);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data.to_int() == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            wait(delay);
+            {
+                // read D
+                cout << "start test " << test_num << endl;
+                auto tple = pid_get_gain3();
+                auto ttrans = std::get<0>(tple);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data.to_int() == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            // read P
-            cout << "start test " << test_num << endl;
-            adr = PID_CHGR1_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
+            {
+                // try write P, but configuration not started
+                cout << "start test " << test_num << endl;
+                auto tple = pid_gain1(5);
+                auto ttrans = std::get<0>(tple);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            sc_bv<32> temp_data = *(trans->get_data_ptr());
-            assert(temp_data.to_int() == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+            {
+                // read P again should still be 0
+                cout << "start test " << test_num << endl;
+                auto tple = pid_get_gain1();
+                auto ttrans = std::get<0>(tple);
 
-            // read I
-            cout << "start test " << test_num << endl;
-            adr = PID_CHGR2_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data.to_int() == 0);
+                assert(pid1->p->Kp == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            temp_data = *(trans->get_data_ptr());
-            assert(temp_data.to_int() == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+            {
+                // start config
+                cout << "start test " << test_num << endl;
+                auto tple = pid_configure(true);
+                auto ttrans = std::get<0>(tple);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            // read D
-            cout << "start test " << test_num << endl;
-            adr = PID_CHGR3_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
+            {
+                // try write P, config started
+                cout << "start test " << test_num << endl;
+                auto tple = pid_gain1(5);
+                auto ttrans = std::get<0>(tple);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                assert(pid1->p->Kp == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            temp_data = *(trans->get_data_ptr());
-            assert(temp_data.to_int() == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+            {
+                // read P again should be value
+                cout << "start test " << test_num << endl;
+                auto tple = pid_get_gain1();
+                auto ttrans = std::get<0>(tple);
 
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data.to_int() == 5);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            // try write P, but configuration not started
-            cout << "start test " << test_num << endl;
-            adr = PID_CHGR1_ADR;
-            data_bv = 5;
-            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
+            {
+                // read status for P, shoud be disabled
+                cout << "start test " << test_num << endl;
 
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+                auto tple = pid_status();
+                auto ttrans = std::get<0>(tple);
 
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data.to_int() == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            // read P again should still be 0
-            cout << "start test " << test_num << endl;
-            adr = PID_CHGR1_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
+            {
+                // enable P
+                cout << "start test " << test_num << endl;
+                auto tple = pid_enable(true, false, false);
+                auto ttrans = std::get<0>(tple);
 
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            temp_data = *(trans->get_data_ptr());
-            assert(temp_data.to_int() == 0);
-            assert(pid1->p->Kp == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                assert(pid1->p->Kp == 5);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
+            {
+                // read status for P, shoud be enabled
+                cout << "start test " << test_num << endl;
+                auto tple = pid_status();
+                auto ttrans = std::get<0>(tple);
 
-            // start config
-            cout << "start test " << test_num << endl;
-            adr = PID_CR_ADR;
-            data_bv = "10";
-            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data[0] == 1);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
+            {
+                // disable P
+                cout << "start test " << test_num << endl;
 
-            // try write P, config started
-            cout << "start test " << test_num << endl;
-            adr = PID_CHGR1_ADR;
-            data_bv = 5;
-            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            assert(pid1->p->Kp == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+                auto tple = pid_disable(true, false, false);
+                auto ttrans = std::get<0>(tple);
 
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
-            // read P again should be value
-            cout << "start test " << test_num << endl;
-            adr = PID_CHGR1_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
+            {
+                // read status for P, shoud be disabled
+                cout << "start test " << test_num << endl;
+                auto tple = pid_status();
+                auto ttrans = std::get<0>(tple);
 
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            temp_data = *(trans->get_data_ptr());
-            assert(temp_data.to_int() == 5);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
-
-
-            // read status for P, shoud be disabled
-            cout << "start test " << test_num << endl;
-            adr = PID_CHSR_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
-
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            temp_data = *(trans->get_data_ptr());
-            assert(temp_data.to_int() == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
-
-            // enable P
-            cout << "start test " << test_num << endl;
-            adr = PID_CHER_ADR;
-            data_bv = "001";
-            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
-
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            assert(pid1->p->Kp == 5);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
-
-            // read status for P, shoud be enabled
-            cout << "start test " << test_num << endl;
-            adr = PID_CHSR_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
-
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            temp_data = *(trans->get_data_ptr());
-            assert(temp_data[0] == 1);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
-
-
-            // disable P
-            cout << "start test " << test_num << endl;
-            adr = PID_CHDR_ADR;
-            data_bv = "001";
-            send_transaction(trans, tlm::TLM_WRITE_COMMAND, data_bv.to_int(), adr);
-
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
-
-            // read status for P, shoud be disabled
-            cout << "start test " << test_num << endl;
-            adr = PID_CHSR_ADR;
-            data_bv = "0";
-            send_transaction(trans, tlm::TLM_READ_COMMAND, data_bv.to_int(), adr);
-
-            assert(trans->get_response_status() == tlm::TLM_OK_RESPONSE);
-            assert(pid1->p->Kp == 0);
-            temp_data = *(trans->get_data_ptr());
-            assert(temp_data[0] == 0);
-            cout << "done test " << test_num << endl;
-            test_num ++;
-            wait(delay);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                assert(pid1->p->Kp == 0);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data[0] == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(delay);
+            }
 
 
         }
