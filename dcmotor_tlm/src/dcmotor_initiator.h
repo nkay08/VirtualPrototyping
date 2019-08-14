@@ -428,6 +428,34 @@ SC_MODULE(dcmotor_initiator){
                 wait(delay);
             }
 
+            {
+                cout << "start test " << test_num << endl;
+                pid_enable(false, true, false);
+                wait(delay);
+                pid_gain2(5);
+                wait(delay);
+                auto tple = pid_status();
+                auto ttrans = std::get<0>(tple);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                assert(pid1->i->Ki == 5);
+                sc_bv<32> temp_data = *(ttrans->get_data_ptr());
+                assert(temp_data[1] == 1);
+                cout << "done test " << test_num << endl;
+                test_num++;
+                wait(sc_time(50, SC_MS));
+
+            }
+
+            {
+                cout << "start test " << test_num << endl;
+                auto tple = pid_reset(true);
+                auto ttrans = std::get<0>(tple);
+                assert(ttrans->get_response_status() == tlm::TLM_OK_RESPONSE);
+                assert(pid1->i->Ki == 0);
+                cout << "done test " << test_num << endl;
+                test_num++;
+
+            }
 
         }
 
