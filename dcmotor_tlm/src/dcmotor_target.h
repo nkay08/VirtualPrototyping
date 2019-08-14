@@ -248,7 +248,7 @@ SC_MODULE(dcmotor_target)
             Logger("PID_CHGR1: " + PID_CHGR1.to_string());
             Logger("PID_CHGR2: " + PID_CHGR2.to_string());
             Logger("PID_CHGR3: " + PID_CHGR3.to_string());
-            Logger("Real PID coefficents: K=" + std::to_string(pid1->p->Kp) + ", Ki=" + std::to_string(pid1->i->Ki) + ", Kd=" + std::to_string(pid1->d->Kd) );
+            Logger("Real PID coefficents: Kp=" + std::to_string(pid1->p->Kp) + ", Ki=" + std::to_string(pid1->i->Ki) + ", Kd=" + std::to_string(pid1->d->Kd) );
             Logger("------------------------------------------------------------------------------------------");
         }
 
